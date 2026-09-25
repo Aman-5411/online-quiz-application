@@ -1,0 +1,39 @@
+# Java
+target/
+*.class
+
+# Maven
+.mvn/timing.properties
+
+# IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# VS Code
+.vscode/
+
+# Node
+node_modules/
+dist/
+build/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Database
+*.sql.bak
+
+# Secrets
+application-local.properties
+application-prod.properties
