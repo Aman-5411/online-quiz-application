@@ -1,78 +1,50 @@
-# Architecture Document
+# Online Quiz Application — Architecture
 
-# Online Quiz Application
+## 1. Overview
 
-## 1. Architecture Overview
-
-The application uses a client-server architecture.
+The application uses a client-server architecture. The React frontend communicates with a Spring Boot REST API. The backend applies authentication, authorization, validation, quiz business rules, and scoring before reading from or writing to PostgreSQL.
 
 ```text
-React Frontend
-      |
-      | HTTP/REST
-      v
-Spring Boot Backend
-      |
-      +----------------------+
-      |                      |
-      v                      v
-PostgreSQL Database      AI Quiz Service
-                              |
-                              v
-                         AI Provider
+Browser
+  |
+  v
+React + Vite frontend (Vercel)
+  |
+  | HTTPS / REST / JSON
+  v
+Spring Boot backend (Render / Docker)
+  |
+  | Spring Data JPA / Hibernate
+  v
+PostgreSQL database (Supabase)
 ```
 
-The backend remains the source of truth for authentication, authorization, scoring, validation, persistence, and business rules.
+## 2. Technology Stack
 
----
-
-# 2. Technology Stack
-
-## Backend
-
+### Backend
 - Java 21
 - Spring Boot
 - Spring Web
 - Spring Security
+- JWT authentication
 - Spring Data JPA
 - Hibernate
-- Bean Validation
-- JWT
 - Maven
 
-## Database
-
-- PostgreSQL
-
-## Frontend
-
+### Frontend
 - React
-- JavaScript or TypeScript
-- HTML
+- Vite
+- JavaScript
 - CSS
 
-## AI
+### Hosting
+- Vercel for the frontend
+- Render for the backend container
+- Supabase for PostgreSQL
 
-- External AI provider through a dedicated provider abstraction.
-- Structured JSON output.
-- Backend validation before persistence.
+## 3. Backend Layers
 
-The exact AI provider should be configurable rather than tightly coupling business logic to one provider.
-
-## Development Tools
-
-- IntelliJ IDEA / VS Code
-- Git
-- GitHub
-- Postman
-- PostgreSQL
-- pgAdmin
-
----
-
-# 3. Backend Architecture
-
-Use layered architecture:
+The backend follows a layered design:
 
 ```text
 Controller
@@ -81,472 +53,116 @@ Service
     ↓
 Repository
     ↓
-Database
+PostgreSQL
 ```
 
-Supporting layers:
+- **Controllers** expose REST endpoints and translate HTTP requests into service calls.
+- **Services** enforce business rules, ownership checks, quiz workflows, and scoring.
+- **Repositories** use Spring Data JPA to persist and retrieve entities.
+- **Entities** represent persisted application data.
+- **DTOs** shape API responses where data must be limited, especially for quiz-taking questions.
+- **Security/configuration** handles JWT validation, endpoint access rules, CORS, and application settings.
+- **Exception handling** provides centralized handling for API errors.
 
-- Security
-- DTO
-- Entity
-- Exception
-- Mapper
-- Configuration
-- AI
+## 4. Main Domain Areas
 
----
+- **User:** account details and role.
+- **Quiz:** quiz metadata and publication status.
+- **Question:** question text and association to a quiz.
+- **Option:** answer choices and correctness data.
+- **QuizAttempt:** a user's attempt, timing, and result.
+- **QuizAnswer:** the selected option for a question in an attempt.
 
-# 4. Backend Folder Structure
+The backend uses a single-choice quiz workflow. The question service validates that a single-choice question has only one correct option.
+
+## 5. Authentication and Authorization
+
+1. The user registers or submits login credentials.
+2. The backend validates the credentials.
+3. On successful login, the backend issues a JWT.
+4. The frontend includes the token in protected API requests.
+5. The JWT authentication filter validates the token and establishes the authenticated principal.
+6. Spring Security and service-level checks enforce roles and record ownership.
+
+Administrative quiz mutations are restricted to ADMIN. Attempt retrieval checks that a normal user is accessing their own records; administrative reporting is restricted to ADMIN.
+
+## 6. Quiz Attempt Flow
 
 ```text
-backend/
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   └── com/quizapp/
-│   │   │       ├── QuizApplication.java
-│   │       │
-│   │       ├── config/
-│   │       │   └── ...
-│   │       │
-│   │       ├── controller/
-│   │       │   ├── AuthController.java
-│   │       │   ├── UserController.java
-│   │       │   ├── QuizController.java
-│   │       │   ├── QuestionController.java
-│   │       │   ├── AttemptController.java
-│   │       │   └── AIQuizController.java
-│   │       │
-│   │       ├── service/
-│   │       │   ├── AuthService.java
-│   │       │   ├── UserService.java
-│   │       │   ├── QuizService.java
-│   │       │   ├── QuestionService.java
-│   │       │   ├── AttemptService.java
-│   │       │   └── AIQuizService.java
-│   │       │
-│   │       ├── repository/
-│   │       │   ├── UserRepository.java
-│   │       │   ├── QuizRepository.java
-│   │       │   ├── QuestionRepository.java
-│   │       │   ├── OptionRepository.java
-│   │       │   ├── AttemptRepository.java
-│   │       │   └── QuizGenerationRequestRepository.java
-│   │       │
-│   │       ├── entity/
-│   │       │   ├── User.java
-│   │       │   ├── Quiz.java
-│   │       │   ├── Question.java
-│   │       │   ├── Option.java
-│   │       │   ├── QuizAttempt.java
-│   │       │   └── QuizGenerationRequest.java
-│   │       │
-│   │       ├── dto/
-│   │       │   ├── auth/
-│   │       │   ├── quiz/
-│   │       │   ├── question/
-│   │       │   ├── attempt/
-│   │       │   └── ai/
-│   │       │
-│   │       ├── security/
-│   │       │   ├── JwtService.java
-│   │       │   ├── JwtAuthenticationFilter.java
-│   │       │   └── SecurityConfig.java
-│   │       │
-│   │       ├── ai/
-│   │       │   ├── AIQuizProvider.java
-│   │       │   ├── AIQuizResponseValidator.java
-│   │       │   └── provider/
-│   │       │       └── ...
-│   │       │
-│   │       ├── exception/
-│   │       │   ├── GlobalExceptionHandler.java
-│   │       │   ├── ResourceNotFoundException.java
-│   │       │   ├── BadRequestException.java
-│   │       │   ├── UnauthorizedException.java
-│   │       │   └── ForbiddenException.java
-│   │       │
-│   │       └── enums/
-│   │           ├── Role.java
-│   │           ├── Difficulty.java
-│   │           ├── QuizSource.java
-│   │           └── QuizStatus.java
-│   │
-│   └── resources/
-│       ├── application.properties
-│       └── db/
-│           └── migration/
-│
-├── src/test/
-├── pom.xml
+User selects a published quiz
+          ↓
+Backend creates an attempt
+          ↓
+Frontend loads safe question/option responses
+          ↓
+User submits selected options
+          ↓
+Backend validates and stores answers
+          ↓
+User submits attempt, or timer expires
+          ↓
+Backend calculates and saves result
+          ↓
+Frontend displays result and attempt history
+```
+
+The frontend timer uses the attempt's backend `startedAt` value and configured duration. A scheduled backend task also finds expired unfinished attempts and submits them automatically. The backend remains authoritative for scoring and completion.
+
+## 7. API Overview
+
+All routes are rooted at `/api`.
+
+| Area | Routes used by the application |
+|---|---|
+| Authentication | `/api/auth/**` |
+| Published quizzes | `GET /api/quizzes/status/PUBLISHED` |
+| Quiz management | `/api/quizzes/**` |
+| Question and option management | `/api/questions/**`, `/api/options/**` |
+| Start an attempt | `POST /api/attempts/user/{userId}/quiz/{quizId}` |
+| Questions for an attempt | `GET /api/quizzes/{quizId}/questions/attempt` |
+| Submit an answer | `POST /api/answers?attemptId={attemptId}&questionId={questionId}&optionId={optionId}` |
+| Attempt answers | `/api/answers/attempt/{attemptId}` |
+| Submit an attempt | `POST /api/attempts/{attemptId}/submit` |
+| User attempt history | `GET /api/attempts/user/{userId}` |
+| Admin attempt report | `GET /api/admin/attempts` |
+
+Endpoint access depends on authentication, role, and ownership requirements.
+
+## 8. Repository Layout
+
+```text
+online-quiz-application/
+├── Backend/
+│   ├── src/
+│   │   ├── main/
+│   │   └── test/
+│   ├── Dockerfile
+│   └── pom.xml
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   ├── package.json
+│   └── vite.config.js
+├── PRD.md
+├── Architecture.md
+├── Design.md
+├── Rules.md
+├── Phases.md
+├── Memory.md
 └── README.md
 ```
 
----
-
-# 5. Frontend Structure
-
-```text
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   │   ├── Login/
-│   │   ├── Register/
-│   │   ├── Dashboard/
-│   │   ├── Quiz/
-│   │   ├── Results/
-│   │   ├── History/
-│   │   ├── Profile/
-│   │   └── Admin/
-│   │       ├── Dashboard/
-│   │       ├── Quizzes/
-│   │       ├── Questions/
-│   │       └── AIQuizGenerator/
-│   │
-│   ├── services/
-│   │   └── api.js
-│   │
-│   ├── context/
-│   │   └── AuthContext.jsx
-│   │
-│   ├── hooks/
-│   ├── utils/
-│   ├── styles/
-│   ├── App.jsx
-│   └── main.jsx
-│
-├── package.json
-└── README.md
-```
-
----
-
-# 6. Database Entities
-
-## User
-
-- id
-- name
-- email
-- password
-- role
-- createdAt
-
-## Quiz
-
-- id
-- title
-- description
-- category
-- difficulty
-- source
-- status
-- createdBy
-- createdAt
-- publishedAt
-
-## Question
-
-- id
-- quizId
-- questionText
-- questionOrder
-- explanation
-- difficulty
-
-## Option
-
-- id
-- questionId
-- optionText
-- isCorrect
-
-## QuizAttempt
-
-- id
-- userId
-- quizId
-- score
-- totalQuestions
-- correctAnswers
-- incorrectAnswers
-- percentage
-- startedAt
-- completedAt
-
-## QuizGenerationRequest
-
-- id
-- requestedBy
-- topic
-- category
-- difficulty
-- questionCount
-- generationReason
-- status
-- createdAt
-
----
-
-# 7. AI Architecture
-
-The AI integration must be isolated from core business logic.
-
-```text
-AIQuizController
-       ↓
-AIQuizService
-       ↓
-AIQuizProvider
-       ↓
-External AI Provider
-       ↓
-Structured Generated Quiz
-       ↓
-AIQuizResponseValidator
-       ↓
-QuizService
-       ↓
-Repository
-       ↓
-Database
-```
-
-The provider abstraction allows another AI provider or a mock provider to be used later.
-
-Example:
-
-```java
-public interface AIQuizProvider {
-
-    GeneratedQuiz generateQuiz(
-        QuizGenerationRequest request
-    );
-}
-```
-
-The AI provider must not directly access repositories.
-
----
-
-# 8. AI Generation Flow
-
-```text
-Admin/User Request
-       ↓
-Validate Request
-       ↓
-AIQuizService
-       ↓
-AI Provider
-       ↓
-Structured JSON
-       ↓
-Parse Response
-       ↓
-Validate Quiz
-       ↓
-Business Validation
-       ↓
-Save as DRAFT/PENDING_REVIEW
-       ↓
-Admin Approval OR Auto-Publish
-```
-
----
-
-# 9. Personalized Quiz Flow
-
-```text
-User completes quiz
-        ↓
-Attempt stored
-        ↓
-Backend calculates performance
-        ↓
-Performance summary created
-        ↓
-AIQuizService
-        ↓
-AI Provider
-        ↓
-Personalized quiz
-        ↓
-Validation
-        ↓
-Save
-        ↓
-Publish according to configured policy
-```
-
-Only controlled performance information should be sent to the AI.
-
----
-
-# 10. Authentication Flow
-
-```text
-User
- ↓
-Login
- ↓
-Spring Security
- ↓
-Credential validation
- ↓
-JWT generated
- ↓
-Frontend
- ↓
-Protected API request
- ↓
-JWT Filter
- ↓
-Authentication
- ↓
-Authorization
- ↓
-Controller
-```
-
----
-
-# 11. Quiz Flow
-
-```text
-User
- ↓
-Login
- ↓
-Quiz Dashboard
- ↓
-Select Quiz
- ↓
-Start Attempt
- ↓
-Load Questions
- ↓
-Answer Question
- ↓
-Submit Answer
- ↓
-Backend evaluates answer
- ↓
-Immediate Feedback
- ↓
-Next Question
- ↓
-Finish Quiz
- ↓
-Calculate Score
- ↓
-Save Attempt
- ↓
-Show Result
-```
-
----
-
-# 12. Admin AI Flow
-
-```text
-Admin Dashboard
-       ↓
-Generate AI Quiz
-       ↓
-Select topic/difficulty/count
-       ↓
-AI generation
-       ↓
-Backend validation
-       ↓
-PENDING_REVIEW
-       ↓
-Admin reviews
-       ↓
-Edit / Approve / Reject
-       ↓
-PUBLISHED
-```
-
----
-
-# 13. API Structure
-
-## Authentication
-
-POST /api/auth/register
-
-POST /api/auth/login
-
-## Users
-
-GET /api/users/me
-
-GET /api/users/me/attempts
-
-## Quizzes
-
-GET /api/quizzes
-
-GET /api/quizzes/{id}
-
-POST /api/quizzes
-
-PUT /api/quizzes/{id}
-
-DELETE /api/quizzes/{id}
-
-POST /api/quizzes/{id}/publish
-
-POST /api/quizzes/{id}/unpublish
-
-## Questions
-
-POST /api/quizzes/{quizId}/questions
-
-PUT /api/questions/{id}
-
-DELETE /api/questions/{id}
-
-## Attempts
-
-POST /api/quizzes/{quizId}/attempts
-
-POST /api/attempts/{attemptId}/answers
-
-POST /api/attempts/{attemptId}/complete
-
-GET /api/users/me/attempts
-
-## AI
-
-POST /api/ai/quizzes/generate
-
-POST /api/ai/quizzes/personalized
-
-POST /api/ai/quizzes/{id}/review
-
-GET /api/admin/ai/quizzes/pending
-
-POST /api/admin/ai/quizzes/{id}/approve
-
-POST /api/admin/ai/quizzes/{id}/reject
-
----
-
-# 14. Architectural Rules
-
-- Controllers handle HTTP requests only.
-- Services contain business logic.
-- Repositories handle persistence.
-- Entities represent database models.
-- DTOs represent API requests/responses.
-- Security logic stays inside security-related classes.
-- AI provider classes only handle communication with the AI provider.
-- AI cannot directly access repositories.
-- AI cannot bypass validation.
-- AI cannot determine authorization.
-- AI cannot calculate official scores.
-- Frontend communicates with backend through APIs.
+## 9. Production Configuration
+
+The backend uses environment variables:
+- `DB_URL`
+- `DB_USERNAME`
+- `DB_PASSWORD`
+- `JWT_SECRET`
+- `CORS_ALLOWED_ORIGIN`
+- `PORT` (optional; defaults to `8080`)
+
+The frontend uses:
+- `VITE_API_BASE_URL`
+
+Do not commit production secrets. Vite variables prefixed with `VITE_` are visible to browser code and must not contain secrets.

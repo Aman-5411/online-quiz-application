@@ -1,671 +1,114 @@
-# UI/UX Design Document
+# Online Quiz Application — UI/UX Design
 
-# Online Quiz Application
+## 1. Design Direction
 
-## 1. Design Goal
+The application uses a classic, restrained, professional interface. The goal is readability and clear task flow rather than decorative effects.
 
-The application should feel modern, clean, simple, and professional.
+Design principles:
+- Simple and uncluttered screens.
+- Clear page hierarchy and readable text.
+- Consistent spacing and controls.
+- Responsive layouts.
+- Useful loading, validation, success, and error feedback.
+- Separate user and administrator workflows.
 
-The interface should prioritize:
+## 2. Visual Theme
 
-- Readability.
-- Simplicity.
-- Fast navigation.
-- Clear feedback.
-- Consistent components.
-- Responsive design.
-- Clear distinction between normal user and Admin workflows.
+The interface uses a subdued palette:
+- Deep navy/slate for primary actions and important navigation.
+- White for cards and form surfaces.
+- Light gray for page backgrounds and borders.
+- Muted blue-gray for secondary text.
+- Restrained red for errors and destructive actions.
+- Restrained green for success states.
 
-The application should feel like a modern learning platform rather than a basic CRUD project.
+Avoid neon colors, excessive gradients, heavy shadows, and unnecessary animation.
 
----
+## 3. Typography and Layout
 
-# 2. Theme
+- Use a clean sans-serif typeface.
+- Establish hierarchy with font weight and spacing.
+- Keep forms and quiz content easy to scan.
+- Use centered, readable form layouts for authentication.
+- Keep tables and dashboard cards aligned and spacious.
+- Make controls usable on desktop and smaller screens.
 
-Primary theme:
+## 4. Authentication Pages
 
-Modern Educational Platform
+### Login
+- Application mark/logo.
+- Email and password fields.
+- Primary login action.
+- Link to registration.
+- Clear error message when login fails.
 
-Design characteristics:
+### Registration
+- Full name, email, password, and confirm-password fields.
+- Primary account-creation action.
+- Link to login.
+- Clear feedback when registration fails.
 
-- Clean.
-- Minimal.
-- Professional.
-- Friendly.
-- Responsive.
+## 5. User Dashboard
 
-Avoid excessive animations, gradients, shadows, and visual clutter.
+The dashboard provides:
+- A welcome/overview area.
+- Summary information about quiz activity where available.
+- Published quizzes that can be started.
+- Navigation to quiz attempts/history.
 
----
+Quiz cards should emphasize the quiz title, category, difficulty, and action to begin.
 
-# 3. Color System
+## 6. Quiz Attempt Screen
 
-Use a consistent color palette.
+The quiz-taking page prioritizes the question and its answer options:
+- Clear question text and progress context.
+- Easy-to-select single-choice options.
+- Visible remaining time.
+- Clear submission/navigation actions.
+- Responsive spacing and readable controls.
 
-### Primary
+Correct-answer information must not be revealed before the backend accepts the answer or completes the relevant result flow.
 
-Indigo / Blue
+## 7. Result and Attempt History
 
-Used for:
+The result page emphasizes:
+- Final score and percentage.
+- Correct answers and total questions.
+- Completion information.
+- A clear route back to the dashboard or attempt history.
 
-- Primary buttons.
-- Navigation.
-- Links.
-- Active states.
+Attempt history uses a readable list or table to show quiz, date/time, score, and result details where available.
 
-### Secondary
+## 8. Administrator Interface
 
-Purple / Violet
-
-Used sparingly for:
-
-- Secondary actions.
-- Highlights.
-- AI-related accents.
-
-### Success
-
-Green
-
-Used for:
-
-- Correct answers.
-- Successful operations.
-- Completed quizzes.
-- Approved AI quizzes.
-
-### Error
-
-Red
-
-Used for:
-
-- Incorrect answers.
-- Validation errors.
-- Failed operations.
-- Rejected AI quizzes.
-
-### Warning
-
-Amber / Yellow
-
-Used for:
-
-- Warnings.
-- Timer alerts.
-- Pending AI review.
-
-### Neutral
-
-Use neutral colors for:
-
-- Backgrounds.
-- Cards.
-- Borders.
-- Secondary text.
-
-Do not use too many colors simultaneously.
-
----
-
-# 4. AI Visual Language
-
-AI features should be visually identifiable but should not dominate the application.
-
-Use a subtle AI visual treatment for:
-
-- Generate with AI.
-- Personalized quiz.
-- AI review.
-- AI-generated quiz status.
-
-Examples:
-
-```text
-✨ Generate with AI
-✨ Personalized Practice
-✨ AI Review
-```
-
-The AI badge should communicate that content was AI-generated without implying that AI is authoritative.
-
----
-
-# 5. Typography
-
-Use a modern sans-serif font.
-
-Preferred options:
-
-- Inter
-- Poppins
-- Roboto
-
-Primary choice:
-
-Inter
-
-### Typography Hierarchy
-
-Page Heading:
-
-32px
-
-Section Heading:
-
-24px
-
-Card Heading:
-
-18px
-
-Body:
-
-16px
-
-Secondary Text:
-
-14px
-
-Small Metadata:
-
-12px
-
-Use font weight to establish hierarchy rather than excessive font sizes.
-
----
-
-# 6. Layout
-
-The application should use a responsive layout.
-
-Desktop:
-
-```text
-------------------------------------------------
-| Logo | Navigation            | Profile       |
-------------------------------------------------
-|                                              |
-|              Main Content                    |
-|                                              |
-------------------------------------------------
-```
-
-Mobile:
-
-```text
-----------------------
-| Logo          Menu |
-----------------------
-|                    |
-|    Main Content    |
-|                    |
-----------------------
-```
-
----
-
-# 7. Navigation
-
-Authenticated users should see:
-
-- Dashboard
-- Quizzes
-- History
-- Profile
-- Logout
-
-Administrators should additionally see:
-
-- Admin Dashboard
-- Manage Quizzes
-- Manage Questions
-- AI Quiz Generator
-- AI Review Queue
-
----
-
-# 8. Login Page
-
-The login page should contain:
-
-- Application logo/name.
-- Email field.
-- Password field.
-- Login button.
-- Registration link.
-- Error message area.
-
-Keep the page visually simple.
-
----
-
-# 9. Registration Page
-
-Fields:
-
-- Name.
-- Email.
-- Password.
-- Confirm password.
-
-Show validation errors close to the relevant field.
-
----
-
-# 10. Dashboard
-
-The dashboard should provide an overview.
-
-Possible sections:
-
-```text
-Welcome, User
-
-+----------------+ +----------------+
-| Quizzes Taken  | | Average Score  |
-+----------------+ +----------------+
-
-+----------------+ +----------------+
-| Best Score     | | Total Attempts |
-+----------------+ +----------------+
-
-Available Quizzes
---------------------------------
-| Java Basics                  |
-| 10 Questions | Easy          |
-| [Start Quiz]                 |
---------------------------------
-
-Personalized Practice
---------------------------------
-| Focus: Polymorphism          |
-| AI-generated                |
-| [Start Practice]             |
---------------------------------
-```
-
----
-
-# 11. Quiz Listing
-
-Quiz cards should display:
-
-- Title.
-- Description.
-- Category.
-- Difficulty.
-- Number of questions.
-- Source when useful.
-- Start button.
-
-Users should be able to filter by:
-
-- Category.
-- Difficulty.
-
-AI-generated quizzes may show a subtle "AI Generated" badge.
-
----
-
-# 12. Quiz Attempt Screen
-
-The quiz screen should focus the user's attention on one question.
-
-Example:
-
-```text
-Question 4 of 10
-
-What is inheritance in Java?
-
-○ Option A
-
-○ Option B
-
-○ Option C
-
-○ Option D
-
-                [Submit Answer]
-```
-
-Optional timer:
-
-```text
-Time Remaining: 08:42
-```
-
----
-
-# 13. Answer Feedback
-
-Correct:
-
-- Show success state.
-- Clearly identify the correct answer.
-- Display a short explanation if available.
-- Provide Next button.
-
-Incorrect:
-
-- Show error state.
-- Identify the correct answer after submission.
-- Display explanation if available.
-- Provide Next button.
-
-Feedback must be visually obvious without relying only on color.
-
----
-
-# 14. Result Page
-
-Show:
-
-```text
-Quiz Completed!
-
-80%
-
-8 / 10 Correct
-
-Correct       8
-Incorrect     2
-
-[View History]
-[Back to Quizzes]
-
-[Practice Weak Areas]
-```
-
-The "Practice Weak Areas" action may trigger personalized AI quiz generation when that feature is enabled.
-
----
-
-# 15. History Page
-
-Display attempts in table/card format.
-
-Fields:
-
-- Quiz.
-- Date.
-- Score.
-- Percentage.
-- Correct answers.
-- Incorrect answers.
-
-Optionally show:
-
-- Weak topics.
-- Recommended practice action.
-
----
-
-# 16. Admin Dashboard
-
-Admin dashboard should contain:
-
-```text
-Admin Dashboard
-
-Users       Quizzes       Questions
- 125          24             240
-
-AI Generated     Pending Review
-     15                 4
-
-Recent Quizzes
-
-Java Basics       10 Questions    Edit Delete
-SQL Fundamentals  15 Questions    Edit Delete
-```
-
-Admin should have clear access to:
-
+The admin area provides navigation for:
+- Dashboard overview.
 - Quiz management.
-- Question management.
-- AI generation.
-- AI review queue.
-- Publication controls.
-- Attempt statistics.
-
----
-
-# 17. AI Quiz Generator
-
-The Admin AI generator should provide:
-
-```text
-Generate Quiz with AI
-
-Topic:
-[ Java                         ]
-
-Category:
-[ Programming                 ]
-
-Difficulty:
-[ Intermediate                ]
-
-Number of Questions:
-[ 10                          ]
-
-Question Type:
-[ Multiple Choice             ]
-
-Focus Topics:
-[ Optional                    ]
-
-              [Generate Quiz]
-```
-
-During generation:
-
-- Show a loading state.
-- Prevent duplicate submissions.
-- Handle AI failures clearly.
-
-After generation:
-
-```text
-AI Generated Quiz
-
-Status: Pending Review
-
-[Review]
-[Edit]
-[Approve]
-[Reject]
-```
-
----
-
-# 18. AI Review Screen
-
-Show:
-
-```text
-AI Quiz Review
-
-Question 1
-
-Which mechanism enables runtime polymorphism?
-
-Options:
-A. Overloading
-B. Overriding
-C. Static binding
-D. Compilation
-
-AI Suggestions:
-- Difficulty: Intermediate
-- Wording: Clear
-- Possible issue: None
-
-[Accept]
-[Edit]
-[Reject]
-```
-
-AI suggestions should be clearly labeled as suggestions.
-
----
-
-# 19. Admin Quiz Editor
-
-The Admin editor should work for both:
-
-- Manually created quizzes.
-- AI-generated quizzes.
-
-Admins should be able to:
-
-- Edit title.
-- Edit description.
-- Change category.
-- Change difficulty.
-- Edit questions.
-- Edit options.
-- Change correct answers.
-- Add/remove questions.
-- Publish.
-- Unpublish.
-- Archive.
-
----
-
-# 20. Forms
-
-Forms should:
-
-- Use clear labels.
-- Show required fields.
-- Validate input.
-- Display useful errors.
-- Disable submission while processing.
-- Show success feedback.
-
----
-
-# 21. Buttons
-
-Primary button:
-
-Use for the main action.
-
-Examples:
-
-- Login.
-- Start Quiz.
-- Create Quiz.
-- Submit Answer.
-- Generate with AI.
-
-Secondary button:
-
-Use for less important actions.
-
-Danger button:
-
-Use for destructive actions.
-
-Examples:
-
-- Delete Quiz.
-- Delete Question.
-- Reject AI Quiz.
-
-Destructive actions should require confirmation.
-
----
-
-# 22. Loading States
-
-Never leave users wondering whether something is happening.
-
-Use:
-
-- Skeleton loaders.
-- Spinners.
-- Disabled buttons.
-- Loading text.
-
-AI generation should have a dedicated loading state because external AI requests may take longer than normal API calls.
-
----
-
-# 23. Empty States
-
-When there is no data, show a meaningful message.
-
-Example:
-
-"No quiz attempts yet."
-
-Then provide an appropriate action:
-
-"Explore Quizzes"
-
-For Admin AI review:
-
-"No AI-generated quizzes are waiting for review."
-
----
-
-# 24. Error States
-
-Errors should be understandable.
-
-Avoid:
-
-"Something went wrong."
-
-Prefer:
-
-"Unable to generate the quiz right now. Please try again."
-
-Do not expose technical backend or AI-provider details to normal users.
-
----
-
-# 25. Responsive Design
-
-The application must work on:
-
-- Desktop.
-- Laptop.
-- Tablet.
-- Mobile.
-
-Quiz questions and buttons must remain usable on small screens.
-
----
-
-# 26. Accessibility
-
-The UI should:
-
-- Use semantic HTML.
-- Provide labels for form inputs.
-- Support keyboard navigation.
-- Maintain sufficient contrast.
-- Avoid color-only feedback.
-- Provide accessible button labels.
-- Maintain readable font sizes.
-- Use icons together with text when meaning is important.
-
----
-
-# 27. Design Principles
-
-Always prioritize:
-
-1. Clarity.
-2. Consistency.
-3. Accessibility.
-4. Responsiveness.
-5. Simplicity.
-6. Clear distinction between AI suggestions and authoritative application results.
-
-Do not add visual elements merely because they look impressive.
+- Quiz creation and editing.
+- Attempt reporting.
+
+The admin attempts page includes:
+- Search across attempt/user/quiz details.
+- Result filters.
+- Separate user and email details.
+- A readable table with adequate spacing.
+
+Keep administration functional and focused; avoid showing unused menu items or placeholder sections.
+
+## 9. Forms and Feedback
+
+- Every input has a clear label.
+- Validation and request errors should be understandable.
+- Primary actions should be visually distinct.
+- Destructive actions should be visually distinguishable.
+- Disable or show progress for actions while requests are in flight where implemented.
+- Empty states should explain what the user can do next.
+
+## 10. Accessibility and Responsive Use
+
+- Use semantic elements and labels.
+- Keep contrast sufficient.
+- Do not rely on color alone to communicate an outcome.
+- Ensure keyboard access for interactive controls.
+- Keep buttons and answer options usable on small screens.
+- Avoid layouts that require horizontal scrolling for ordinary form content.

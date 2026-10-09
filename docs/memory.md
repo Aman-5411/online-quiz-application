@@ -1,779 +1,170 @@
-# Project Memory
+# Online Quiz Application — Project Memory
 
-# Online Quiz Application
+> This file records the actual implementation and delivery state of the project.
+> Read it before making future code changes. Update it after significant work.
+> Do not describe unimplemented functionality as part of the delivered application.
 
-> This file is the persistent implementation memory for the project.
-> Every AI coding assistant must read this file before making changes.
-> Every AI coding assistant must update this file after completing a significant task or phase.
->
-> This file records ACTUAL implementation progress. Do not mark planned work as completed.
+## 1. Project Status
 
----
+**Overall status: Completed and deployed for the current scope.**
 
-# 1. Project Identity
+- Frontend: Vercel
+- Backend: Render
+- Database: Supabase PostgreSQL
+- Repository: https://github.com/Aman-5411/online-quiz-application
+- Backend URL: https://online-quiz-application-vnln.onrender.com
 
-Project:
+The application has been deployed and the user confirmed that registration worked after the production CORS setting was corrected.
 
-Online Quiz Application
-
-Purpose:
-
-A full-stack quiz platform where users can register, authenticate, take quizzes, receive feedback, view scores, track quiz history, and optionally receive AI-generated personalized practice.
-
-Primary Backend:
-
-Java + Spring Boot
-
-Database:
-
-PostgreSQL
-
-Frontend:
-
-React
-
-Authentication:
-
-Spring Security + JWT
-
-Build Tool:
-
-Maven
-
-AI:
-
-External AI provider through a provider abstraction and validated backend workflow.
-
----
-
-# 2. Current Development Phase
-
-Current Phase:
-
-PHASE 0 — PROJECT PLANNING
-
-Current Status:
-
-Planning documents completed. Implementation has not started.
-
-Last Completed Phase:
-
-Phase 0 — Project Planning
-
-Next Phase:
-
-Phase 1 — Database Design
-
----
-
-# 3. Technology Decisions
-
-## Backend
+## 2. Technology Stack
 
 - Java 21
 - Spring Boot
-- Spring Web
 - Spring Security
-- Spring Data JPA
-- Hibernate
-- Bean Validation
-- JWT
+- JWT authentication
+- Spring Data JPA / Hibernate
 - Maven
+- PostgreSQL
+- React
+- Vite
+- JavaScript and CSS
+- Docker for backend deployment
+- Vercel, Render, and Supabase hosting
 
-## Database
+## 3. Implemented Features
 
-PostgreSQL
+### Authentication and Security
+- Registration and login.
+- JWT-based authentication.
+- Role-based access controls.
+- Admin-only quiz-management mutations.
+- User attempt ownership checks.
+- Centralized exception handling.
+- Environment-based production configuration.
+- CORS configuration for the frontend origin.
 
-## Frontend
+### Quiz Management
+- Quiz listing and management.
+- Quiz create/edit workflows for administrators.
+- Question and option management.
+- Published quiz listing.
+- Single-choice validation.
+- Safe question/option response DTOs for quiz taking.
 
-React
+### Attempts and Results
+- Start quiz attempts.
+- Submit answers.
+- Submit attempts.
+- Calculate and persist results.
+- Show quiz result details.
+- View user attempt history.
+- Admin-wide attempt reporting.
+- Search and result filtering in the admin attempts view.
+- Automatic submission of expired attempts.
 
-## AI
+### Frontend
+- Registration and login pages.
+- User dashboard.
+- Quiz attempt screen with timer.
+- Result page.
+- Attempt history page.
+- Admin dashboard.
+- Admin quiz management pages.
+- Admin attempts page.
+- Logo/favicon and application tab title.
+- API base URL supplied by `VITE_API_BASE_URL`.
 
-AI provider is intentionally abstracted behind:
+## 4. Production Configuration
 
-```text
-AIQuizProvider
+### Backend environment variables
+
+- `DB_URL`
+- `DB_USERNAME`
+- `DB_PASSWORD`
+- `JWT_SECRET`
+- `CORS_ALLOWED_ORIGIN`
+- `PORT` (optional; defaults to 8080)
+
+The deployed backend uses the Supabase session pooler connection details. Do not put credentials or secret values in this file.
+
+### Frontend environment variable
+
+```env
+VITE_API_BASE_URL=https://online-quiz-application-vnln.onrender.com/api
 ```
 
-The concrete provider should be selected during implementation.
+For local development, use:
 
----
-
-# 4. Architecture Decisions
-
-The backend follows:
-
-```text
-Controller
-    ↓
-Service
-    ↓
-Repository
-    ↓
-Database
+```env
+VITE_API_BASE_URL=http://localhost:8080/api
 ```
 
-DTOs are used for API requests and responses.
-
-Entities represent database models.
-
-Security logic is separated into security-related classes.
-
-Business logic belongs in services.
-
-AI integration is separated from core business logic.
-
-AI providers must not directly access repositories.
-
----
-
-# 5. Authentication Decisions
-
-Authentication method:
-
-JWT
-
-Password hashing:
-
-BCrypt
-
-Roles:
-
-- USER
-- ADMIN
-
-Important security rule:
-
-A user must never be able to access another user's private quiz attempts simply by changing a user ID in a request.
-
-AI must never handle authentication or authorization.
-
----
-
-# 6. Quiz Source and Status
-
-Quiz sources:
-
-- MANUAL
-- AI_GENERATED
-
-Quiz statuses:
-
-- DRAFT
-- PENDING_REVIEW
-- PUBLISHED
-- REJECTED
-- ARCHIVED
-
-AI-generated quizzes normally begin as:
-
-PENDING_REVIEW
-
-Automatic publishing may be enabled later through explicit configuration.
-
----
-
-# 7. AI Decisions
-
-## Included AI Capabilities
-
-Planned:
-
-- AI quiz generation for Admins.
-- Personalized quiz generation using controlled performance summaries.
-- Optional AI quiz review.
-- Optional automatic publishing.
-
-## AI Must Not Control
-
-- Authentication.
-- Authorization.
-- User roles.
-- Official score calculation.
-- Completed attempts.
-- Database access.
-- Security decisions.
-
-## AI Data Minimization
-
-Only required quiz-generation/performance information should be sent to the AI.
-
-Never send:
-
-- Passwords.
-- JWTs.
-- API keys.
-- Authentication secrets.
-- Unnecessary personal information.
-
-## AI Validation
-
-All AI-generated quiz output must be validated by the backend before storage.
-
----
-
-# 8. Database Entities
-
-Planned entities:
-
-- User
-- Quiz
-- Question
-- Option
-- QuizAttempt
-- QuizGenerationRequest
-
-Relationships:
-
-```text
-User
- └── QuizAttempt
-
-Quiz
- └── Question
-      └── Option
-
-Quiz
- └── QuizAttempt
-
-QuizGenerationRequest
- └── generated Quiz
-```
-
----
-
-# 9. Implemented Features
-
-## Authentication
-
-Status: NOT STARTED
-
-- [ ] Registration
-- [ ] Password hashing
-- [ ] Login
-- [ ] JWT generation
-- [ ] JWT validation
-- [ ] Role-based authorization
-
-## User Management
-
-Status: NOT STARTED
-
-- [ ] User profile
-- [ ] Current user endpoint
-- [ ] User data protection
-
-## Manual Quiz Management
-
-Status: NOT STARTED
-
-- [ ] Create quiz
-- [ ] Read quiz
-- [ ] Update quiz
-- [ ] Delete/archive quiz
-- [ ] Publish/unpublish quiz
-
-## Question Management
-
-Status: NOT STARTED
-
-- [ ] Create question
-- [ ] Update question
-- [ ] Delete question
-- [ ] Manage options
-- [ ] Correct answer management
-- [ ] Explanation
-
-## Quiz Attempt
-
-Status: NOT STARTED
-
-- [ ] Start attempt
-- [ ] Submit answer
-- [ ] Evaluate answer
-- [ ] Immediate feedback
-- [ ] Complete quiz
-
-## Scoring
-
-Status: NOT STARTED
-
-- [ ] Correct answers
-- [ ] Incorrect answers
-- [ ] Score
-- [ ] Percentage
-
-## Progress
-
-Status: NOT STARTED
-
-- [ ] Attempt history
-- [ ] Previous scores
-- [ ] Performance summary
-
-## AI Quiz Generation
-
-Status: NOT STARTED
-
-- [ ] AI provider abstraction
-- [ ] AI provider implementation
-- [ ] Generate quiz
-- [ ] Parse structured response
-- [ ] Validate generated quiz
-- [ ] Save AI-generated quiz
-- [ ] Track generation request
-- [ ] Admin review
-
-## Personalized AI Quizzes
-
-Status: NOT STARTED
-
-- [ ] Performance summary
-- [ ] Weak-topic identification
-- [ ] Personalized generation
-- [ ] Validation
-- [ ] Publication policy
-
-## AI Review
-
-Status: NOT STARTED
-
-- [ ] Question review
-- [ ] Quality suggestions
-- [ ] Duplicate/similarity detection
-- [ ] Admin accept/edit/reject
-
-## AI Auto-Publishing
-
-Status: NOT STARTED
-
-- [ ] Configuration
-- [ ] Validation
-- [ ] Automatic publication
-- [ ] Failure handling
-
-## Leaderboard
-
-Status: NOT STARTED
-
-- [ ] Quiz leaderboard
-- [ ] Overall leaderboard
-
----
-
-# 10. Current Database Schema
-
-Status:
-
-NOT IMPLEMENTED
-
-Planned structure:
-
-```text
-users
---------------------------------
-id
-name
-email
-password
-role
-created_at
-
-
-quizzes
---------------------------------
-id
-title
-description
-category
-difficulty
-source
-status
-created_by
-created_at
-published_at
-
-
-questions
---------------------------------
-id
-quiz_id
-question_text
-question_order
-explanation
-difficulty
-
-
-options
---------------------------------
-id
-question_id
-option_text
-is_correct
-
-
-quiz_attempts
---------------------------------
-id
-user_id
-quiz_id
-score
-total_questions
-correct_answers
-incorrect_answers
-percentage
-started_at
-completed_at
-
-
-quiz_generation_requests
---------------------------------
-id
-requested_by
-topic
-category
-difficulty
-question_count
-generation_reason
-status
-created_at
-```
-
-This is the planned schema and must not be treated as implemented until migrations are actually created and tested.
-
----
-
-# 11. API Endpoints
-
-These are planned endpoints. Update this section as implementation changes.
-
-## Authentication
-
-POST /api/auth/register
-
-POST /api/auth/login
-
-## Users
-
-GET /api/users/me
-
-GET /api/users/me/attempts
-
-## Quizzes
-
-GET /api/quizzes
-
-GET /api/quizzes/{id}
-
-POST /api/quizzes
-
-PUT /api/quizzes/{id}
-
-DELETE /api/quizzes/{id}
-
-POST /api/quizzes/{id}/publish
-
-POST /api/quizzes/{id}/unpublish
-
-## Questions
-
-POST /api/quizzes/{quizId}/questions
-
-PUT /api/questions/{id}
-
-DELETE /api/questions/{id}
-
-## Attempts
-
-POST /api/quizzes/{quizId}/attempts
-
-POST /api/attempts/{attemptId}/answers
-
-POST /api/attempts/{attemptId}/complete
-
-## AI
-
-POST /api/ai/quizzes/generate
-
-POST /api/ai/quizzes/personalized
-
-POST /api/ai/quizzes/{id}/review
-
-## Admin AI Management
-
-GET /api/admin/ai/quizzes/pending
-
-POST /api/admin/ai/quizzes/{id}/approve
-
-POST /api/admin/ai/quizzes/{id}/reject
-
----
-
-# 12. Files Created
-
-Update this list as files are actually created.
-
-## Root
-
-- [x] PRD.md
-- [x] Architecture.md
-- [x] Rules.md
-- [x] Phases.md
-- [x] Design.md
-- [x] Memory.md
-- [ ] README.md
-
-## Backend
-
-- [ ] QuizApplication.java
-- [ ] SecurityConfig.java
-- [ ] JwtService.java
-- [ ] JwtAuthenticationFilter.java
-- [ ] AuthController.java
-- [ ] QuizController.java
-- [ ] QuestionController.java
-- [ ] AttemptController.java
-- [ ] AIQuizController.java
-- [ ] AIQuizService.java
-- [ ] AIQuizProvider.java
-
-## Frontend
-
-- [ ] App.jsx
-- [ ] AuthContext.jsx
-- [ ] Login page
-- [ ] Register page
-- [ ] Dashboard
-- [ ] Quiz page
-- [ ] Result page
-- [ ] History page
-- [ ] Admin dashboard
-- [ ] AI Quiz Generator
-- [ ] AI Review Queue
-
----
-
-# 13. Important Decisions Log
-
-Record important architectural decisions here.
-
-Format:
-
-Date:
-
-Decision:
-
-Reason:
-
-Alternatives Considered:
-
-Impact:
-
----
-
-## Decision 1
-
-Date:
-
-2026-09-25
-
-Decision:
-
-Use Java 21 + Spring Boot for the backend.
-
-Reason:
-
-The project is intended to demonstrate Java backend development and Spring Boot skills.
-
-Impact:
-
-All backend implementation will follow the Spring Boot ecosystem.
-
----
-
-## Decision 2
-
-Date:
-
-2026-09-25
-
-Decision:
-
-Add AI as a separate quiz-generation subsystem while retaining full Admin functionality.
-
-Reason:
-
-AI should automate quiz creation without replacing deterministic backend logic or Admin control.
-
-Impact:
-
-The architecture includes AIQuizService, AIQuizProvider, AI response validation, and AI-related quiz statuses.
-
----
-
-## Decision 3
-
-Date:
-
-2026-09-25
-
-Decision:
-
-AI must not directly access the database or control authentication, authorization, scoring, or user roles.
-
-Reason:
-
-Security and business-critical operations must remain deterministic and under backend control.
-
-Impact:
-
-AI output must pass through backend validation and normal application services.
-
----
-
-## Decision 4
-
-Date:
-
-2026-09-25
-
-Decision:
-
-AI-generated quizzes should support Admin approval and optional automatic publishing.
-
-Reason:
-
-This provides both human oversight and automation without forcing either workflow.
-
-Impact:
-
-Quiz status and publication policy must be represented in the backend.
-
----
-
-# 14. Current Problems
-
-Record unresolved problems here.
-
-Format:
-
-Problem:
-
-Status:
-
-Possible Cause:
-
-Attempted Solutions:
-
-Next Action:
-
----
-
-Currently:
-
-No known implementation problems because coding has not started.
-
----
-
-# 15. Known Limitations
-
-Currently:
-
-- Implementation has not started.
-- AI provider has not been selected/configured.
-- Leaderboard is optional.
-- Automatic AI publishing is not yet implemented.
-- AI-generated content will require backend validation.
-- Advanced features are not part of the initial MVP.
-
----
-
-# 16. Testing Status
-
-## Backend
-
-- [ ] Unit tests
-- [ ] Repository tests
-- [ ] Service tests
-- [ ] Controller tests
-- [ ] Security tests
-- [ ] Integration tests
-- [ ] AI response validation tests
-- [ ] AI provider failure tests
-
-## Frontend
-
-- [ ] Authentication flow
-- [ ] Quiz flow
-- [ ] Result flow
-- [ ] History flow
-- [ ] Admin flow
-- [ ] AI generation flow
-
----
-
-# 17. Last Completed Work
-
-Date:
-
-2026-09-25
-
-Work:
-
-Project planning documents created and updated to include AI quiz generation, personalized quizzes, optional AI review, and optional automatic publishing.
-
-Status:
-
-Completed.
-
----
-
-# 18. Next Task
-
-The next AI assistant should:
-
-1. Read PRD.md.
-2. Read Architecture.md.
-3. Read Rules.md.
-4. Read Phases.md.
-5. Read Design.md.
-6. Read this Memory.md.
-7. Begin Phase 1 — Database Design.
-8. Do not implement later phases prematurely.
-9. Update this file after completing the phase.
-
----
-
-# 19. AI Handoff Notes
-
-Important:
-
-Do not assume previous implementation work that is not recorded in this file.
-
-Before modifying existing code:
-
-1. Inspect the relevant files.
-2. Check the current implementation.
-3. Check this memory.
-4. Make the smallest necessary change.
-5. Test the change.
-6. Update Memory.md.
-
-If the existing implementation conflicts with this document, explain the conflict before making a major architectural change.
-
----
-
-# 20. Last Updated
-
-Date:
-
-2026-09-25
-
-Updated By:
-
-Project AI Assistant
-
-Reason:
-
-Added AI quiz-generation architecture, AI boundaries, personalized quiz workflow, AI review, optional auto-publishing, and corresponding development phases.
+`VITE_*` variables are exposed to browser code; never place secrets in them.
+
+## 5. Deployment Notes
+
+- Render builds and runs the backend from `Backend/Dockerfile`.
+- The backend connects to Supabase PostgreSQL through the session pooler.
+- Vercel builds the Vite frontend from the `frontend/` root directory.
+- `CORS_ALLOWED_ORIGIN` must match the exact deployed Vercel origin.
+- `VITE_API_BASE_URL` must point to the deployed backend API base URL.
+- Keep secrets in Render's environment configuration and local untracked environment variables.
+
+## 6. Testing Status
+
+Backend automated tests have been run and passed, including:
+- Authentication service and controller tests.
+- Quiz service and controller tests.
+- Quiz attempt and answer service tests.
+- Question service and controller tests.
+- Repository tests.
+- Security configuration and attempt ownership tests.
+- Authentication and quiz workflow integration tests.
+- User controller tests.
+
+The full backend command `mvn clean test` passed after production configuration changes.
+
+Frontend automated tests were intentionally skipped by decision. The frontend production build was verified using `npm run build`.
+
+## 7. Important Implementation Details
+
+- Quiz attempt duration is configured by `quiz.attempt.duration-minutes`, currently 10 minutes.
+- Expired-attempt scheduler interval is configured by `quiz.attempt.scheduler-rate`, currently 600000 milliseconds (10 minutes).
+- The frontend timer is based on backend `startedAt` and `durationMinutes`.
+- `GET /api/admin/attempts` provides admin attempt reporting.
+- Attempt ownership is enforced in the service layer.
+- Quiz-taking responses avoid exposing the `correct` property before the appropriate result workflow.
+- Published quiz deletion is restricted by current service logic. Clean up production test data carefully and consider related attempt/answer records before destructive database operations.
+
+## 8. Current Delivery Checklist
+
+- [x] Backend implemented.
+- [x] Frontend implemented for the current scope.
+- [x] Backend authentication and authorization.
+- [x] Quiz management.
+- [x] Attempt and scoring workflow.
+- [x] User attempt history.
+- [x] Admin attempt reporting.
+- [x] Backend automated tests.
+- [x] Frontend production build.
+- [x] Production environment variables configured.
+- [x] Backend deployed to Render.
+- [x] Database hosted on Supabase.
+- [x] Frontend deployed to Vercel.
+- [x] Registration verified after CORS correction.
+- [x] Project documentation updated.
+
+## 9. Future Maintenance Rules
+
+For any future change:
+1. Inspect the existing code before editing.
+2. Make the smallest appropriate change.
+3. Run relevant tests/builds.
+4. Preserve security and ownership checks.
+5. Update this memory file and relevant documentation.
+6. Report files changed and checks performed.
+
+## 10. Last Updated
+
+**Date:** 2026-10-09  
+**Status:** Current project scope completed and deployed.

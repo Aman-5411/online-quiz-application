@@ -1,453 +1,112 @@
-# Product Requirements Document (PRD)
+# Online Quiz Application — Product Requirements
 
-# Online Quiz Application
+## 1. Overview
 
-## 1. Project Overview
+The Online Quiz Application is a full-stack web application where users can create an account, sign in, browse published quizzes, take timed quizzes, view results, and review previous attempts. Administrators can manage quiz content and inspect quiz-attempt records.
 
-The Online Quiz Application is a full-stack web application that allows users to register, log in securely, browse quizzes, attempt multiple-choice questions, receive immediate feedback, and track their quiz performance.
+The application is deployed with a React frontend on Vercel, a Spring Boot backend on Render, and PostgreSQL on Supabase.
 
-The application has two primary roles:
+## 2. User Roles
 
-- USER — takes quizzes and tracks personal performance.
-- ADMIN — manages quizzes, questions, users, and AI-generated quiz content.
+### User
+- Register and sign in.
+- View available published quizzes.
+- Start a quiz attempt.
+- Answer single-choice questions.
+- Submit a quiz and view the result.
+- Review previous attempts and scores.
 
-The application will also contain an AI Quiz System that can generate quizzes, personalize quizzes using controlled performance summaries, and optionally review or automatically publish generated quizzes.
+### Administrator
+- Access the admin dashboard.
+- Create, edit, and manage quizzes.
+- Manage quiz questions and answer options.
+- Publish quizzes.
+- View quiz attempts across users.
 
-The goal is to build a secure, maintainable, interview-ready application demonstrating Java, Spring Boot, REST APIs, PostgreSQL, authentication, authorization, frontend development, and practical AI integration.
+## 3. Implemented Functional Requirements
 
----
-
-## 2. Target Users
-
-### 2.1 Regular Users
-
-Users should be able to:
-
-- Create an account.
-- Log in securely.
-- Browse available quizzes.
-- Filter quizzes by topic/category and difficulty.
-- View quiz details.
-- Start a quiz.
-- Answer questions one at a time.
-- Receive immediate feedback.
-- Complete a quiz.
-- View final scores.
-- View previous attempts.
-- Track performance.
-- Receive or access personalized AI-generated practice quizzes when enabled.
-
-### 2.2 Administrators
-
-Administrators should be able to:
-
-- Log in using an administrator account.
-- Create quizzes manually.
-- Edit quizzes.
-- Delete quizzes.
-- Add, edit, and delete questions.
-- Define correct answers.
-- Set categories and difficulty.
-- Publish/unpublish quizzes.
-- Review AI-generated quizzes.
-- Edit AI-generated quizzes.
-- Approve or reject AI-generated quizzes.
-- Configure whether AI-generated quizzes require approval.
-- View quiz and attempt information.
-
----
-
-## 3. Core Features
-
-### 3.1 Authentication
-
-- User registration.
-- User login.
-- Secure password hashing.
-- JWT-based authentication.
-- Role-based authorization.
-- Protected API endpoints.
-- Secure logout/client-side authentication handling.
-- Request validation.
-
-Passwords must never be stored in plain text.
-
----
-
-### 3.2 User Management
-
-Each user should have:
-
-- Unique ID.
-- Name.
-- Email/username.
-- Hashed password.
-- Role.
-- Account creation timestamp.
-
-Roles:
-
-- USER
-- ADMIN
-
-The backend must enforce ownership of private user data.
-
----
-
-### 3.3 Quiz Management
-
-Each quiz should contain:
-
-- Quiz ID.
-- Title.
-- Description.
-- Category/topic.
-- Difficulty.
-- Questions.
-- Source.
-- Publication status.
-- Creation timestamp.
-- Optional creator information.
-- Publication timestamp.
-
-Possible quiz sources:
-
-- MANUAL
-- AI_GENERATED
-
-Possible statuses:
-
-- DRAFT
-- PENDING_REVIEW
-- PUBLISHED
-- REJECTED
-- ARCHIVED
-
-Administrators can:
-
-- Create quizzes.
-- Read quizzes.
-- Update quizzes.
-- Delete/archive quizzes.
-- Publish/unpublish quizzes.
-
----
-
-### 3.4 Question Management
-
-Each question should contain:
-
-- Question ID.
-- Question text.
-- Options.
-- Correct answer(s).
-- Question order.
-- Optional explanation.
-- Difficulty.
-
-The initial implementation will focus on multiple-choice questions.
-
-The architecture should allow future support for:
-
-- Single-answer questions.
-- Multiple-answer questions.
-
-Correct answers must never be exposed to a user before answer submission.
-
----
-
-## 4. Quiz Taking
-
-When a user starts a quiz:
-
-1. The server creates an attempt.
-2. Questions are loaded.
-3. The user answers each question.
-4. The answer is submitted.
-5. The backend evaluates the answer.
-6. Immediate feedback is returned.
-7. The score is updated.
-8. The attempt is completed when the quiz finishes.
-9. The final result is stored.
-
-The official score must always be calculated by deterministic backend logic, not by AI.
-
----
-
-## 5. Scoring and Progress
-
-The application should:
-
-- Calculate the score automatically.
-- Track correct answers.
-- Track incorrect answers.
-- Calculate percentage.
-- Store final results.
-- Track attempts.
-- Provide performance history.
-
-Example:
-
-Total Questions: 10
-Correct Answers: 8
-Incorrect Answers: 2
-Score: 80%
-
-The AI may analyze a controlled performance summary, but it must never modify the official score or attempt record.
-
----
-
-# 6. AI Quiz System
-
-The AI system is an additional subsystem. It does not replace the backend's business logic, security, or Admin functionality.
-
-## 6.1 AI Quiz Generation
-
-Administrators can request an AI-generated quiz using parameters such as:
-
-- Topic.
-- Category.
-- Difficulty.
-- Number of questions.
-- Question type.
-- Optional focus topics.
-
-Example:
-
-Topic: Java
-Difficulty: Intermediate
-Questions: 10
-Type: Multiple Choice
-
-The AI can generate:
-
-- Quiz title.
-- Description.
-- Questions.
-- Options.
-- Correct answers.
-- Explanations.
-- Suggested category.
-- Suggested difficulty.
-
-The AI response must be structured and validated by the backend before storage.
-
----
-
-## 6.2 Personalized AI Quiz Generation
-
-The system may generate practice quizzes based on a user's quiz performance.
-
-The AI should receive only the minimum required performance summary.
-
-Example:
-
-Topic: Java OOP
-Score: 60%
-Weak areas:
-- Polymorphism
-- Interfaces
-- Abstract Classes
-
-The AI can generate a new practice quiz focused on those areas.
-
-The AI must not receive unnecessary personal information such as passwords, authentication tokens, or unrelated private data.
-
----
-
-## 6.3 AI Quiz Review
-
-Optional functionality:
-
-AI can review questions and provide suggestions about:
-
-- Clarity.
-- Potential ambiguity.
-- Duplicate/similar questions.
-- Difficulty.
-- Option quality.
-- Explanation quality.
-
-AI suggestions must not automatically overwrite Admin-created content.
-
-The Admin should be able to:
-
-- Accept.
-- Edit.
-- Reject.
-
----
-
-## 6.4 AI Publishing
-
-AI-generated quizzes can support two modes.
-
-### Admin Approval Mode
-
-```text
-AI generates
-    ↓
-PENDING_REVIEW
-    ↓
-Admin reviews
-    ↓
-APPROVE / EDIT / REJECT
-    ↓
-PUBLISHED
-```
-
-### Automatic Publishing Mode
-
-```text
-AI generates
-    ↓
-Backend validation
-    ↓
-PUBLISHED
-```
-
-Automatic publishing should only occur when enabled by the application's configuration.
-
----
-
-# 7. AI Boundaries
-
-AI CAN:
-
-- Generate quiz questions.
-- Generate options.
-- Generate explanations.
-- Suggest categories.
-- Suggest difficulty.
-- Generate personalized practice quizzes.
-- Analyze supplied quiz-performance summaries.
-- Review quiz content and provide suggestions.
-
-AI CANNOT:
-
-- Authenticate users.
-- Authorize requests.
-- Change user roles.
-- Create Admin accounts.
-- Calculate the official score.
-- Modify completed attempts.
-- Directly access the database.
-- Directly execute database operations.
-- Bypass backend validation.
-- Access passwords or authentication tokens.
-- Automatically overwrite Admin content.
-- Make security decisions.
-
-The backend remains the source of truth.
-
----
-
-# 8. Leaderboard
-
-Leaderboard functionality is optional for the initial version.
-
-If implemented, it may support:
-
-- Quiz-specific leaderboard.
-- Overall leaderboard.
-- Score-based ranking.
-- Average score.
-
-Leaderboard calculations must be performed by backend logic.
-
----
-
-# 9. Optional Advanced Features
-
-Only after the MVP is stable:
-
-- Quiz timer.
-- Random question selection.
-- Difficulty levels.
-- Search.
-- Pagination.
-- Advanced filtering.
-- Performance analytics.
-- Admin dashboard.
-- User profile.
-- AI quiz review.
-- Automated personalized quiz generation.
-- AI auto-publishing.
-- Dark mode.
-
----
-
-# 10. Non-Functional Requirements
-
-## Security
-
-- Passwords must be hashed.
-- JWT must be used for authentication.
-- Protected endpoints require authentication.
-- Admin endpoints require ADMIN authorization.
-- Users cannot access another user's private history.
-- Input must be validated.
-- AI must not receive unnecessary private information.
-- AI-generated content must pass backend validation.
-- Secrets must be stored in environment variables.
-
-## Performance
-
-- Avoid unnecessary database queries.
-- Use pagination for large datasets.
-- Use proper indexes.
-- Avoid unnecessary entity loading.
-- AI calls should not block unrelated application functionality where practical.
-
-## Maintainability
-
-- Follow layered architecture.
-- Keep controllers thin.
-- Put business logic in services.
-- Use repositories for database access.
-- Use DTOs for API communication.
-- Keep AI integration behind a dedicated service/provider abstraction.
-
----
-
-# 11. MVP
-
-The first stable version must contain:
-
-1. User registration.
-2. User login.
-3. JWT authentication.
-4. Role-based authorization.
-5. Admin quiz CRUD.
-6. Question management.
-7. Quiz listing.
-8. Quiz attempts.
-9. Answer evaluation.
-10. Score calculation.
-11. Attempt history.
-
-Recommended first AI feature:
-
-12. Admin-triggered AI quiz generation.
-
-Personalized AI quizzes, AI review, and automatic publishing should be implemented only after the core system is stable.
-
----
-
-# 12. Success Criteria
-
-The project is successful when:
-
+### Authentication and Authorization
 - Users can register and log in.
-- Authentication works securely.
-- Admins can create and manage quizzes.
-- Users can take quizzes.
-- Answers are evaluated correctly.
-- Scores are calculated correctly.
-- Attempts are stored.
-- Users can view their own history.
-- Unauthorized users cannot access protected resources.
-- Admins can generate AI quizzes.
-- AI-generated content is validated before storage.
-- AI does not control security or official scoring.
-- The application can be run locally using documented instructions.
+- Authentication uses JWT.
+- Passwords are handled by the backend's authentication implementation.
+- Protected API endpoints require authentication.
+- Administrative quiz-management operations require the ADMIN role.
+- Users cannot access another user's private attempt data by changing a user ID in a request.
+
+### Quiz Management
+- Quizzes have details such as title, description, category, difficulty, source, and publication status.
+- Administrators can create and manage quizzes and their questions/options.
+- Published quizzes can be listed for users.
+- Quiz-management operations are protected by backend authorization.
+
+### Quiz Taking
+- A user starts an attempt for a published quiz.
+- The frontend loads quiz questions through the API.
+- The user submits answers for individual questions.
+- Quiz-taking responses do not expose correct-answer flags before submission.
+- Attempts have a configured duration.
+- Expired attempts are automatically submitted by a scheduled backend task.
+
+### Results and History
+- The backend calculates and stores attempt results.
+- Results include score, total questions, correct answers, percentage, and timing information where available.
+- Users can review their own attempts.
+- Administrators can view all attempts through the admin attempts view.
+
+### Administration
+- The admin dashboard provides access to quiz management and attempt reporting.
+- The admin attempts view supports searching and filtering attempt records.
+
+## 4. Non-Functional Requirements
+
+### Security
+- Authentication and authorization are enforced by the backend.
+- JWT signing secret and database credentials are supplied through environment variables.
+- CORS is configured for the deployed frontend origin.
+- Correct answers are not included in the quiz-taking question response.
+- Ownership checks protect users' attempt records.
+
+### Maintainability
+- The backend uses a layered Spring architecture.
+- Frontend API requests are centralized through the API service.
+- Environment-specific values are configured outside source code.
+- Backend automated tests cover services, controllers, repositories, security, and integration workflows.
+
+### Usability
+- The interface uses a restrained navy, white, and light-neutral visual theme.
+- Forms show useful validation or error feedback.
+- Main user and administrator workflows are accessible through dedicated pages.
+
+## 5. Technology Stack
+
+| Area | Technology |
+|---|---|
+| Backend | Java 21, Spring Boot |
+| API and security | Spring Web, Spring Security, JWT |
+| Persistence | Spring Data JPA, Hibernate |
+| Database | PostgreSQL |
+| Backend build | Maven |
+| Frontend | React, Vite, JavaScript, CSS |
+| Frontend hosting | Vercel |
+| Backend hosting | Render with Docker |
+| Database hosting | Supabase |
+
+## 6. Deployment
+
+- Frontend: Vercel
+- Backend: Render
+- Database: Supabase PostgreSQL
+
+The frontend reads its API base URL from `VITE_API_BASE_URL`. The backend reads `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET`, and `CORS_ALLOWED_ORIGIN` from the deployment environment.
+
+## 7. Success Criteria
+
+The delivered application is considered complete for its current scope when:
+- A user can register and sign in on the deployed application.
+- The frontend can communicate with the deployed backend.
+- Users can browse published quizzes, take quizzes, and view results.
+- Users can access their own attempt history.
+- Administrators can manage quiz content and view attempts.
+- Backend authorization and attempt ownership checks are enforced.
+- The backend automated test suite passes.
+- The application is deployed with externalized configuration.
